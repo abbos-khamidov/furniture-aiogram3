@@ -41,3 +41,20 @@ def get_user(tg_id):
     user = cur.fetchone()
     conn.close()
     return user
+
+# cart
+
+def add_to_cart(user_id, item, color, size, design, price):
+    conn = sqlite3.connect('shop.db')
+    cur = conn.cursor()
+    cur.execute("INSERT INTO cart (user_id, item, color, size, design, price) VALUES (?, ?, ?, ?, ?, ?)", (user_id, item, color, size, design, price))
+    conn.commit()
+    conn.close()
+
+def get_cart(user_id):
+    conn = sqlite3.connect('shop.db')
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM cart WHERE user_id = ?", (user_id,))
+    cart = cur.fetchall()
+    conn.close()
+    return cart
