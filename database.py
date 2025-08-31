@@ -7,7 +7,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             tg_id INTEGER UNIQUE,
-            name TEXT,
+            username TEXT,
             password TEXT
         )
     """)
@@ -23,3 +23,21 @@ def init_db():
     )""")
     conn.commit()
     conn.close()
+
+# users
+
+def add_user(tg_id, username, password):
+    conn = sqlite3.connect('shop.db')
+    cur = conn.cursor()
+    cur.execute("INSERT INTO users (tg_id, username, password) VALUES (?, ?, ?)", (tg_id, username, password))
+    conn.commit()
+    conn.close()
+
+
+def get_user(tg_id):
+    conn = sqlite3.connect('shop.db')
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM users WHERE tg_id = ?", (tg_id,))
+    user = cur.fetchone()
+    conn.close()
+    return user
