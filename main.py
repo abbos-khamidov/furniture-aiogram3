@@ -40,7 +40,29 @@ async def get_password(message: Message, state: FSMContext):
     await state.clear()
 
 # login
+@dp.message(Command('login'))
+async def login_start(message: Message, state: FSMContext):
+    await message.answer('Введите пароль: ')
+    await state.set_state(LoginState.username)
 
+@dp.message(LoginState.username)
+async def login_user(message: Message, state: FSMContext):
+    await state.update_data(username=message.text)
+    await message.answer('Введите пароль: ')
+    await state.set_state(LoginState.password)
+
+@dp.message(LoginState.password)
+async def get_password(message: Message, state: FSMContext):
+    user = get_user(message.from_user.id)
+    data = await state.get_data()
+    if user and user[2] == data['username'] and user[3] == message.text:
+        sessions[msg.from_user.id] = user[0]
+        await message.answer('Вход выполнен успешно!', reply_markup=main_menu)
+    else:
+        await message.answer('Неверный логин или пароль')
+    await state.clear()
+    
+# 
 
 
 async def main():
